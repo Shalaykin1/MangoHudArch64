@@ -1,0 +1,14 @@
+[binaries]
+c = ['clang', '--target=arm64ec-pc-windows-msvc']
+cpp = ['clang++', '--target=arm64ec-pc-windows-msvc']
+ar = 'llvm-ar'
+strip = 'llvm-strip'
+
+[properties]
+needs_exe_wrapper = true
+
+[host_machine]
+system = 'windows'
+cpu_family = 'aarch64'
+cpu = 'arm64ec'
+endian = 'little'

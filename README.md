@@ -117,6 +117,38 @@ You can also pass arguments to meson:
 ./build.sh build -Dwith_xnvctrl=disabled
 ```
 
+ARM64 (X11 only, without Wayland) for Winlator imagefs:
+
+```
+chmod +x ./build-arm64-x11-imagefs.sh
+./build-arm64-x11-imagefs.sh
+```
+
+The script builds and installs to `/data/data/com.winlator.vanilla/files/imagefs/usr` by default,
+and verifies that `library_path` in generated `MangoHud.*.json` is:
+
+```
+/data/data/com.winlator.vanilla/files/imagefs/usr/lib/mangohud/libMangoHud.so
+```
+
+Optional environment variables:
+
+- `IMAGEFS_ROOT` / `PREFIX` for custom install location
+- `EXPECTED_LIBRARY_PATH` to validate a custom JSON path
+- `CROSS_FILE` for cross-compiling (for example to `aarch64` from x86_64)
+
+Cross-build to ARM64 (aarch64) from x86_64 host:
+
+```
+CROSS_FILE=./aarch64-linux-gnu.txt ./build-arm64-x11-imagefs.sh
+```
+
+Experimental ARM64EC cross profile (Windows target):
+
+```
+meson setup build/arm64ec --cross-file ./arm64ec-windows-clang.txt
+```
+
 Resulting files will be install to `./build/release` folder.
 
 If you have compiled MangoHud from source, to install it, execute:
