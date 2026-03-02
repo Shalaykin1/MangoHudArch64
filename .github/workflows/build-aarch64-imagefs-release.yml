@@ -1,0 +1,49 @@
+name: Build aarch64 imagefs release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to upload asset to
+        required: true
+        default: winlator-x11-imagefs-2026.03.02
+
+jobs:
+  build-aarch64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            appstream \
+            glslang-tools \
+            libegl-dev \
+            libglvnd-dev \
+            libx11-dev \
+            libxkbcommon-dev \
+            meson \
+            ninja-build \
+            pkg-config \
+            python3-mako
+
+      - name: Build and install imagefs layout
+        run: |
+          sudo mkdir -p /data/data/com.winlator.vanilla/files/imagefs/usr
+          sudo chown -R "$USER":"$USER" /data
+          chmod +x ./build-arm64-x11-imagefs.sh
+          ./build-arm64-x11-imagefs.sh
+
+      - name: Package aarch64 artifact
+        run: |
+          tar -C /data/data/com.winlator.vanilla/files/imagefs -czf build/MangoHud-imagefs-x11-aarch64.tar.gz usr
+
+      - name: Upload asset to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ inputs.release_tag }}" build/MangoHud-imagefs-x11-aarch64.tar.gz -R "${{ github.repository }}" --clobber
