@@ -1,6 +1,13 @@
 name: Build aarch64 imagefs release
 
 on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/build-aarch64-imagefs-release.yml'
+      - 'build-arm64-x11-imagefs.sh'
+      - 'aarch64-linux-gnu.txt'
+      - 'README.md'
   workflow_dispatch:
     inputs:
       release_tag:
@@ -46,4 +53,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "${{ inputs.release_tag }}" build/MangoHud-imagefs-x11-aarch64.tar.gz -R "${{ github.repository }}" --clobber
+          TAG="${{ inputs.release_tag }}"
+          if [ -z "$TAG" ]; then
+            TAG="winlator-x11-imagefs-2026.03.02"
+          fi
+          gh release upload "$TAG" build/MangoHud-imagefs-x11-aarch64.tar.gz -R "${{ github.repository }}" --clobber
